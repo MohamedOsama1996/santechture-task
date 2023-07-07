@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DeleagteAuthProvider implements AuthenticationProvider {
 
-  private AuthenticationManager authenticationManager;
-
-
   @Autowired
   @Qualifier("userAuthenticationProvider")
   @Lazy
@@ -33,10 +30,10 @@ public class DeleagteAuthProvider implements AuthenticationProvider {
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     try {
-      // Try to authenticate using the default authentication manager
+      // Try to authenticate using the admin auth provider
       return adminAuthprovider.authenticate(authentication);
     } catch (AuthenticationException e) {
-      // If the default authentication manager fails, delegate to another authentication provider
+      // If the admin authentication provider fails, delegate to another authentication provider
       AuthenticationProvider delegateProvider = getDelegateProvider();
       if (delegateProvider != null) {
         return delegateProvider.authenticate(authentication);
@@ -52,9 +49,6 @@ public class DeleagteAuthProvider implements AuthenticationProvider {
   }
 
   private AuthenticationProvider getDelegateProvider() {
-    // Return the authentication provider to delegate to
-    // This could be based on some logic or configuration
-    // For example, you could use a @Qualifier annotation to get a specific authentication provider
     return authenticationProvider;
   }
 }
