@@ -4,24 +4,19 @@ package com.santechture.api.configuration;
 import lombok.RequiredArgsConstructor;
 import com.santechture.api.repository.AdminRepository;
 import com.santechture.api.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import java.util.ArrayList;
@@ -36,6 +31,8 @@ public class AppConfig {
     public final AdminRepository repository;
 
     public final UserRepository userRepository;
+
+    public final DeleagteAuthProvider deleagteAuthProvider;
     @Bean("adminDetailsService")
     public UserDetailsService adminDetailsService(){
         return  new UserDetailsService() {
@@ -59,9 +56,7 @@ public class AppConfig {
     @Bean
     public AuthenticationManager authenticationManager() {
         List<AuthenticationProvider> providers = new ArrayList<>();
-        providers.add(userAuthenticationProvider());
-        providers.add(adminAuthenticationProvider());
-
+        providers.add(deleagteAuthProvider);
 
         return new ProviderManager(providers);
     }
@@ -74,7 +69,7 @@ public class AppConfig {
         return provider;
     }
 
-    @Bean
+    @Bean("userAuthenticationProvider")
     public AuthenticationProvider userAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());

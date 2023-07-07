@@ -1,5 +1,6 @@
 package com.santechture.api.configuration.security;
 
+import com.santechture.api.configuration.DeleagteAuthProvider;
 import com.santechture.api.configuration.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,8 @@ public class securityConfig  {
   @Autowired
   JwtAuthFilter jwtAuthFilter;
 
+  @Autowired
+  DeleagteAuthProvider deleagteAuthProvider;
 
 
 
@@ -36,7 +39,8 @@ public class securityConfig  {
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .authenticationProvider(deleagteAuthProvider);
     return http.build();
   }
 }

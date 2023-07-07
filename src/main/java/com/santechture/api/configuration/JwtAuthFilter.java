@@ -28,6 +28,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
   @Autowired
   @Qualifier("adminDetailsService")
+  UserDetailsService adminDetailsService;
+
+  @Autowired
+  @Qualifier("userDetailsService")
   UserDetailsService userDetailsService;
 
   @Override
@@ -50,7 +54,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     if(email !=null && SecurityContextHolder.getContext().getAuthentication()==null){
       // check if email exists in our database
-      UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+      UserDetails userDetails = null;
+      try {
+         userDetails = adminDetailsService.loadUserByUsername(email);
+      }catch (Exception ex){
+         userDetails = userDetailsService.loadUserByUsername(email);
+
+      }
       setAuthenticationContext(userDetails);
     }
 

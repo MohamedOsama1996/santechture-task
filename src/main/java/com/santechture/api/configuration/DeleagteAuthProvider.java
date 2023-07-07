@@ -1,0 +1,60 @@
+package com.santechture.api.configuration;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class DeleagteAuthProvider implements AuthenticationProvider {
+
+  private AuthenticationManager authenticationManager;
+
+
+  @Autowired
+  @Qualifier("userAuthenticationProvider")
+  @Lazy
+  private AuthenticationProvider authenticationProvider;
+
+
+  @Autowired
+  @Qualifier("adminAuthenticationProvider")
+  @Lazy
+  private AuthenticationProvider adminAuthprovider;
+
+
+
+  @Override
+  public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    try {
+      // Try to authenticate using the default authentication manager
+      return adminAuthprovider.authenticate(authentication);
+    } catch (AuthenticationException e) {
+      // If the default authentication manager fails, delegate to another authentication provider
+      AuthenticationProvider delegateProvider = getDelegateProvider();
+      if (delegateProvider != null) {
+        return delegateProvider.authenticate(authentication);
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @Override
+  public boolean supports(Class<?> authentication) {
+    return true;
+  }
+
+  private AuthenticationProvider getDelegateProvider() {
+    // Return the authentication provider to delegate to
+    // This could be based on some logic or configuration
+    // For example, you could use a @Qualifier annotation to get a specific authentication provider
+    return authenticationProvider;
+  }
+}
