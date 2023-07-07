@@ -1,7 +1,6 @@
 package com.santechture.api.configuration;
 
-import com.santechture.api.entity.User;
-import com.santechture.api.exception.BusinessExceptions;
+
 import com.santechture.api.service.JwtService;
 import com.santechture.api.utility.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
